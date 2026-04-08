@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIA Diagnostic · Francesca Polimeni</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--p50:#EEEDFE;--p200:#AFA9EC;--p600:#534AB7;--p800:#3C3489;
+--t50:#E1F5EE;--t600:#0F6E56;--t800:#085041;
+--a50:#FAEEDA;--a600:#854F0B;
+--c50:#FAECE7;--c600:#993C1D;
+--text:#1a1a18;--muted:#5F5E5A;--light:#888780;
+--bg:#fafaf8;--card:#ffffff;--border:rgba(0,0,0,0.1);--soft:rgba(0,0,0,0.06)
+}
+body{font-family:Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.page{max-width:660px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);background:var(--card);position:sticky;top:0;z-index:10}
+.logo{font-family:Georgia,serif;font-size:14px;color:var(--muted)}
+.logo strong{color:var(--text);font-weight:normal}
+.badge{font-family:'Courier New',monospace;font-size:11px;letter-spacing:.06em;padding:4px 12px;border:0.5px solid var(--border);border-radius:100px;color:var(--muted)}
+.eyebrow{font-family:'Courier New',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--p600);margin-bottom:1rem}
+.intro{padding:3rem 0 2rem}
+.intro h1{font-size:clamp(24px,4vw,34px);font-weight:normal;line-height:1.3;margin-bottom:1rem}
+.intro p{font-size:19px;color:var(--muted);line-height:1.7;max-width:540px;margin-bottom:2rem}
+.pills{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:2.5rem}
+.pill{font-family:'Courier New',monospace;font-size:12px;letter-spacing:.06em;padding:5px 12px;border:0.5px solid var(--border);border-radius:100px;color:var(--muted);background:var(--card)}
+.prog-wrap{margin-bottom:2.5rem}
+.prog-top{display:flex;justify-content:space-between;font-family:'Courier New',monospace;font-size:12px;color:var(--light);margin-bottom:8px}
+.prog-track{height:2px;background:var(--soft);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--p600);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.stag{font-family:'Courier New',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:1.5rem;display:inline-block}
+.align{background:var(--p50);color:var(--p800)}
+.intend{background:var(--t50);color:var(--t800)}
+.amplify{background:var(--a50);color:var(--a600)}
+.qblock{display:none;animation:fu .3s ease}
+.qblock.active{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.qtxt{font-size:21px;font-weight:normal;color:var(--text);margin-bottom:1.25rem;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border:0.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .15s,background .15s;background:var(--card)}
+.opt:hover{border-color:var(--p200);background:var(--p50)}
+.opt.sel{border-color:var(--p600);background:var(--p50)}
+.mark{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:border-color .15s,background .15s}
+.opt.sel .mark{border-color:var(--p600);background:var(--p600)}
+.opt.sel .mark::after{content:'';width:6px;height:6px;border-radius:50%;background:white}
+.otxt{font-size:17px;color:var(--text);line-height:1.5}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.5rem;border-top:0.5px solid var(--soft)}
+.btn{padding:11px 24px;border-radius:6px;font-family:Georgia,serif;font-size:15px;cursor:pointer;transition:all .15s;border:0.5px solid var(--border);background:var(--card);color:var(--muted)}
+.btn:hover{background:var(--bg);color:var(--text)}
+.btn.pri{background:var(--text);color:white;border-color:var(--text)}
+.btn.pri:hover{background:var(--p800);border-color:var(--p800)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.ghost{border:none;background:none;color:var(--light);padding:11px 0}
+.btn.ghost:hover{color:var(--text);background:none}
+.cap-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:2rem;margin-top:1rem}
+.frow{margin-bottom:1rem}
+.frow label{display:block;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--light);margin-bottom:6px}
+.frow input,.frow select{width:100%;padding:11px 14px;border:0.5px solid var(--border);border-radius:6px;font-family:Georgia,serif;font-size:15px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.frow input:focus,.frow select:focus{border-color:var(--p600);box-shadow:0 0 0 3px var(--p50)}
+.fcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.priv{font-size:12px;color:var(--light);margin-top:1rem;line-height:1.6}
+.sc-wrap{display:flex;align-items:center;gap:1.5rem;padding:2rem;background:var(--card);border:0.5px solid var(--border);border-radius:12px;margin-bottom:1.5rem}
+.sc-circle{width:80px;height:80px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.sc-num{font-size:28px;font-weight:normal;line-height:1}
+.sc-lbl{font-family:'Courier New',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.sc-meta{flex:1}
+.sc-tier{font-family:'Courier New',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.sc-meta h2{font-size:20px;font-weight:normal;line-height:1.3}
+.rbody{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:1.5rem}
+.rbody p{font-size:19px;color:var(--text);line-height:2;white-space:pre-line}
+.scores-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:1.5rem;padding-top:1.5rem;border-top:0.5px solid var(--soft)}
+.score-card{border:0.5px solid var(--border);border-radius:10px;padding:1.5rem 1rem;text-align:center;background:var(--bg)}
+.score-dim{font-family:'Courier New',monospace;font-size:12px;font-weight:bold;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+.score-val{font-size:52px;font-weight:normal;line-height:1}
+.score-denom{font-size:24px;color:var(--light)}
+.cta{padding:1.75rem 2rem;border-radius:12px;background:var(--text);color:white;margin-bottom:1rem}
+.cta h3{font-size:20px;font-weight:normal;margin-bottom:.75rem;color:white;line-height:1.5}
+.cta a{display:inline-block;margin-top:.75rem;padding:10px 22px;border:1px solid rgba(255,255,255,.4);border-radius:6px;color:white;text-decoration:none;font-family:Georgia,serif;font-size:14px;transition:background .15s}
+.cta a:hover{background:rgba(255,255,255,.1)}
+.saved{display:none;font-family:'Courier New',monospace;font-size:11px;color:var(--t600);margin-top:1rem;letter-spacing:.06em}
+.t-solid .sc-circle{background:var(--t50)}.t-solid .sc-num{color:var(--t800)}.t-solid .sc-lbl{color:var(--t600)}.t-solid .sc-tier{color:var(--t600)}.t-solid .score-val{color:var(--t800)}
+.t-friction .sc-circle{background:var(--a50)}.t-friction .sc-num{color:var(--a600)}.t-friction .sc-lbl{color:var(--a600)}.t-friction .sc-tier{color:var(--a600)}.t-friction .score-val{color:var(--a600)}
+.t-risk .sc-circle{background:var(--c50)}.t-risk .sc-num{color:var(--c600)}.t-risk .sc-lbl{color:var(--c600)}.t-risk .sc-tier{color:var(--c600)}.t-risk .score-val{color:var(--c600)}
+@media(max-width:520px){.fcols{grid-template-columns:1fr}.sc-wrap{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+<div class="logo"><strong>Francesca Polimeni</strong> · AIA System</div>
+<div class="badge">Diagnóstico gratuito</div>
+</header>
+
+<div id="S0" class="page">
+<div class="intro">
+<div class="eyebrow">AIA Diagnostic · Align · Intend · Amplify</div>
+<h1>Este diagnóstico muestra en 10 minutos si tu equipo está listo para escalar con IA o si primero necesita ordenar cómo decide.</h1>
+<p>9 preguntas. Resultado inmediato. Sin vueltas.</p>
+<div class="pills"><span class="pill">9 preguntas</span><span class="pill">10 minutos</span><span class="pill">Resultado inmediato</span></div>
+<button class="btn pri" onclick="show('S1');upd(0)">Empezar diagnóstico</button>
+</div>
+</div>
+
+<div id="S1" class="page" style="display:none">
+<div class="prog-wrap">
+<div class="prog-top"><span id="plbl">Pregunta 1 de 9</span><span id="ppct">0%</span></div>
+<div class="prog-track"><div class="prog-fill" id="pbar" style="width:0%"></div></div>
+</div>
+<div class="qblock active" id="q1">
+<span class="stag align">Align · Claridad de decisión</span>
+<div class="qtxt">¿Tu equipo puede expresar en una frase cuál es el problema estratégico prioritario hoy?</div>
+<div class="opts">
+<div class="opt" data-q="1" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Sí, con total claridad</div></div>
+<div class="opt" data-q="1" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">A veces, pero genera confusión</div></div>
+<div class="opt" data-q="1" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">No, suele generar discusión</div></div>
+</div>
+<div class="nav"><span></span><button class="btn pri" id="n1" onclick="nx(1)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q2">
+<span class="stag align">Align · Claridad de decisión</span>
+<div class="qtxt">Cuando surge una nueva iniciativa, ¿qué suele pasar?</div>
+<div class="opts">
+<div class="opt" data-q="2" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Se evalúa contra prioridades claras</div></div>
+<div class="opt" data-q="2" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">Se debate sin criterio definido</div></div>
+<div class="opt" data-q="2" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">Se suma a la lista sin descartar nada</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(2)">← Anterior</button><button class="btn pri" id="n2" onclick="nx(2)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q3">
+<span class="stag align">Align · Claridad de decisión</span>
+<div class="qtxt">¿Tienen explícitos los trade-offs que están dispuestos a asumir este año?</div>
+<div class="opts">
+<div class="opt" data-q="3" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Sí</div></div>
+<div class="opt" data-q="3" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">Parcialmente</div></div>
+<div class="opt" data-q="3" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">No</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(3)">← Anterior</button><button class="btn pri" id="n3" onclick="nx(3)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q4">
+<span class="stag intend">Intend · Criterios de decisión</span>
+<div class="qtxt">¿Está claro quién decide qué dentro del equipo?</div>
+<div class="opts">
+<div class="opt" data-q="4" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Totalmente claro</div></div>
+<div class="opt" data-q="4" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">A veces genera fricción</div></div>
+<div class="opt" data-q="4" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">Es ambiguo</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(4)">← Anterior</button><button class="btn pri" id="n4" onclick="nx(4)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q5">
+<span class="stag intend">Intend · Criterios de decisión</span>
+<div class="qtxt">¿Existen criterios definidos para priorizar proyectos?</div>
+<div class="opts">
+<div class="opt" data-q="5" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Sí, están documentados</div></div>
+<div class="opt" data-q="5" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">Existen pero no siempre se usan</div></div>
+<div class="opt" data-q="5" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">No</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(5)">← Anterior</button><button class="btn pri" id="n5" onclick="nx(5)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q6">
+<span class="stag intend">Intend · Criterios de decisión</span>
+<div class="qtxt">Cuando hay desacuerdo, ¿cómo se resuelve?</div>
+<div class="opts">
+<div class="opt" data-q="6" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Con criterios explícitos</div></div>
+<div class="opt" data-q="6" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">Por jerarquía</div></div>
+<div class="opt" data-q="6" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">Por urgencia</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(6)">← Anterior</button><button class="btn pri" id="n6" onclick="nx(6)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q7">
+<span class="stag amplify">Amplify · Escala con IA</span>
+<div class="qtxt">¿Las iniciativas de IA responden a prioridades estratégicas claras?</div>
+<div class="opts">
+<div class="opt" data-q="7" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Sí</div></div>
+<div class="opt" data-q="7" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">A veces, pero no siempre</div></div>
+<div class="opt" data-q="7" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">No, surgen más por oportunidad que por estrategia</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(7)">← Anterior</button><button class="btn pri" id="n7" onclick="nx(7)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q8">
+<span class="stag amplify">Amplify · Escala con IA</span>
+<div class="qtxt">¿Están implementando IA actualmente?</div>
+<div class="opts">
+<div class="opt" data-q="8" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Sí, de forma estructurada</div></div>
+<div class="opt" data-q="8" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">Sí, de forma experimental</div></div>
+<div class="opt" data-q="8" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">No todavía</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(8)">← Anterior</button><button class="btn pri" id="n8" onclick="nx(8)" disabled>Siguiente</button></div>
+</div>
+<div class="qblock" id="q9">
+<span class="stag amplify">Amplify · Escala con IA</span>
+<div class="qtxt">¿Podrían explicar por qué cada iniciativa de IA existe?</div>
+<div class="opts">
+<div class="opt" data-q="9" data-v="0" onclick="pick(this)"><div class="mark"></div><div class="otxt">Sí, con claridad</div></div>
+<div class="opt" data-q="9" data-v="1" onclick="pick(this)"><div class="mark"></div><div class="otxt">Con dificultad</div></div>
+<div class="opt" data-q="9" data-v="2" onclick="pick(this)"><div class="mark"></div><div class="otxt">No</div></div>
+</div>
+<div class="nav"><button class="btn ghost" onclick="bk(9)">← Anterior</button><button class="btn pri" id="n9" onclick="showCap()" disabled>Ver mi resultado</button></div>
+</div>
+</div>
+
+<div id="S2" class="page" style="display:none">
+<div class="eyebrow" style="padding-top:1rem">Casi listo</div>
+<h1 style="font-size:28px;font-weight:normal;margin:0.75rem 0 0.5rem">¿A dónde enviamos tu diagnóstico?</h1>
+<p style="font-size:17px;color:var(--muted);margin-bottom:2rem">Completá tus datos para ver el resultado.</p>
+<div class="cap-card">
+<div class="fcols">
+<div class="frow"><label>Nombre</label><input type="text" id="fn" placeholder="Tu nombre"></div>
+<div class="frow"><label>Apellido</label><input type="text" id="fa" placeholder="Tu apellido"></div>
+</div>
+<div class="frow"><label>Email *</label><input type="email" id="fe" placeholder="nombre@empresa.com" required></div>
+<div class="frow"><label>Empresa</label><input type="text" id="fco" placeholder="Nombre de tu organización"></div>
+<div class="frow"><label>Rol</label><input type="text" id="fr" placeholder="CEO, Director, Gerente..."></div>
+<div class="frow"><label>Tamaño del equipo</label>
+<select id="ft">
+<option value="">Seleccioná</option>
+<option value="1-10">1–10 personas</option>
+<option value="11-50">11–50 personas</option>
+<option value="51-200">51–200 personas</option>
+<option value="200+">Más de 200</option>
+</select>
+</div>
+<div style="margin-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<p class="priv" style="margin:0;max-width:340px">Tus datos no se comparten con terceros.</p>
+<button class="btn pri" onclick="submit()">Ver mi resultado →</button>
+</div>
+<div class="saved" id="saved">✓ Registrado correctamente</div>
+</div>
+</div>
+
+<div id="S3" class="page" style="display:none">
+<div class="eyebrow" style="padding-top:1rem">Tu diagnóstico AIA</div>
+<div id="scard" class="sc-wrap" style="margin-top:1.5rem">
+<div class="sc-circle">
+<div class="sc-num" id="snum">—</div>
+<div class="sc-lbl">/ 18 pts</div>
+</div>
+<div class="sc-meta">
+<div class="sc-tier" id="stier">—</div>
+<h2 id="shead">—</h2>
+</div>
+</div>
+<div class="rbody">
+<p id="rtxt">—</p>
+<div class="scores-grid">
+<div class="score-card">
+<div class="score-dim">Align</div>
+<div class="score-val" id="sa">—<span class="score-denom">/6</span></div>
+</div>
+<div class="score-card">
+<div class="score-dim">Intend</div>
+<div class="score-val" id="si">—<span class="score-denom">/6</span></div>
+</div>
+<div class="score-card">
+<div class="score-dim">Amplify</div>
+<div class="score-val" id="samp">—<span class="score-denom">/6</span></div>
+</div>
+</div>
+</div>
+<div class="cta">
+<h3 id="ct">—</h3>
+<a href="https://calendar.app.google/sgJ5Zari9Cvxquig8" target="_blank">Hablemos →</a>
+</div>
+</div>
+
+<script>
+var A={},SCRIPT_URL='https://script.google.com/macros/s/AKfycbxiujOBExRIbc_oY7nSjLwHbvEgvVkP3r7f7k2RgfKum8PxIu_wbs_MqPRu_YuggpY/exec';
+function show(id){['S0','S1','S2','S3'].forEach(function(s){document.getElementById(s).style.display=s===id?'block':'none'});window.scrollTo({top:0,behavior:'smooth'})}
+function upd(n){var p=Math.round(n/9*100);document.getElementById('pbar').style.width=p+'%';document.getElementById('ppct').textContent=p+'%';document.getElementById('plbl').textContent='Pregunta '+(n+1)+' de 9'}
+function pick(el){var q=el.dataset.q,v=parseInt(el.dataset.v);document.querySelectorAll('[data-q="'+q+'"]').forEach(function(o){o.classList.remove('sel')});el.classList.add('sel');A[q]=v;var nb=document.getElementById('n'+q);if(nb)nb.disabled=false}
+function nx(n){if(A[String(n)]===undefined)return;document.getElementById('q'+n).classList.remove('active');document.getElementById('q'+(n+1)).classList.add('active');upd(n);window.scrollTo({top:0,behavior:'smooth'})}
+function bk(n){document.getElementById('q'+n).classList.remove('active');document.getElementById('q'+(n-1)).classList.add('active');upd(n-2);window.scrollTo({top:0,behavior:'smooth'})}
+function showCap(){show('S2')}
+function scores(){var al=(A['1']||0)+(A['2']||0)+(A['3']||0),it=(A['4']||0)+(A['5']||0)+(A['6']||0),am=(A['7']||0)+(A['8']||0)+(A['9']||0);return{al:al,it:it,am:am,tot:al+it+am}}
+function tier(t){return t<=4?'solid':t<=9?'friction':'risk'}
+function submit(){
+var em=document.getElementById('fe').value.trim();
+if(!em){document.getElementById('fe').focus();return}
+var sc=scores(),tr=tier(sc.tot);
+var nm=document.getElementById('fn').value.trim(),ap=document.getElementById('fa').value.trim();
+var co=document.getElementById('fco').value.trim(),ro=document.getElementById('fr').value.trim(),sz=document.getElementById('ft').value;
+var fd=new Date().toLocaleDateString('es-AR');
+fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({fecha:fd,nombre:nm,apellido:ap,email:em,empresa:co,rol:ro,tamano:sz,
+score_total:sc.tot,score_align:sc.al,score_intend:sc.it,score_amplify:sc.am,tier:tr,
+resp_q1:A['1'],resp_q2:A['2'],resp_q3:A['3'],resp_q4:A['4'],resp_q5:A['5'],
+resp_q6:A['6'],resp_q7:A['7'],resp_q8:A['8'],resp_q9:A['9']})}).catch(function(){});
+document.getElementById('saved').style.display='block';
+setTimeout(function(){showResult(sc,tr)},800)}
+function showResult(sc,tr){
+show('S3');
+document.getElementById('scard').className='sc-wrap t-'+tr;
+document.getElementById('snum').textContent=sc.tot;
+var cfg={
+solid:{tier:'SISTEMA CLARO',head:'Tu equipo tiene una base bastante sólida para escalar.',txt:'Las decisiones están relativamente claras, hay coherencia en cómo se prioriza y las iniciativas responden a algo más que urgencia.\n\nEl foco ahora no es ordenar. Es elegir bien qué escalar.\n\nSi afinás qué vale la pena amplificar, la IA puede convertirse en una palanca real.',ct:'Si esto refleja lo que está pasando en tu equipo, lo vemos en 10 minutos y te muestro cómo lo ordenaría.'},
+friction:{tier:'FRICCIÓN ESTRUCTURAL',head:'Tu equipo no está desalineado por falta de ejecución.',txt:'Está operando con tensiones no resueltas.\n\nAlgunas decisiones son claras. Otras se reabren. Algunas prioridades están definidas. Otras compiten en silencio.\n\nEsto genera fricción. Y cuando se incorpora IA en este contexto, esa fricción no desaparece. Se acelera.\n\nOrdenar esto antes de escalar cambia completamente el impacto.',ct:'Si esto refleja lo que está pasando en tu equipo, lo vemos en 10 minutos y te muestro cómo lo ordenaría.'},
+risk:{tier:'RIESGO ALTO AL ESCALAR',head:'Hoy tu equipo no tiene un problema de tecnología.',txt:'Tiene un problema de claridad en su sistema de decisiones.\n\nLas prioridades no están explícitas. Las decisiones no siguen una lógica compartida. Y las iniciativas pueden estar respondiendo más a urgencia que a dirección.\n\nEn este contexto, escalar con IA no genera impacto. Multiplica el desorden.\n\nEl trabajo no es acelerar. Es rediseñar cómo decide el equipo.',ct:'Si esto refleja lo que está pasando en tu equipo, lo vemos en 10 minutos y te muestro cómo lo ordenaría.'}
+};
+var c=cfg[tr];
+document.getElementById('stier').textContent=c.tier;
+document.getElementById('shead').textContent=c.head;
+document.getElementById('rtxt').textContent=c.txt;
+document.getElementById('ct').textContent=c.ct;
+document.getElementById('sa').innerHTML=sc.al+'<span class="score-denom">/6</span>';
+document.getElementById('si').innerHTML=sc.it+'<span class="score-denom">/6</span>';
+document.getElementById('samp').innerHTML=sc.am+'<span class="score-denom">/6</span>'}
+</script>
+</body>
+</html>
