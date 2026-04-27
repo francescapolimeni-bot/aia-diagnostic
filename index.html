@@ -59,6 +59,8 @@ body{font-family:Georgia,serif;background:var(--bg);color:var(--text);min-height
 .frow label{display:block;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--light);margin-bottom:6px}
 .frow input,.frow select{width:100%;padding:11px 14px;border:0.5px solid var(--border);border-radius:6px;font-family:Georgia,serif;font-size:15px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
 .frow input:focus,.frow select:focus{border-color:var(--p600);box-shadow:0 0 0 3px var(--p50)}
+.frow input.err,.frow select.err{border-color:var(--c600);box-shadow:0 0 0 3px var(--c50)}
+.errmsg{display:none;font-family:'Courier New',monospace;font-size:11px;color:var(--c600);margin-top:4px}
 .fcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .priv{font-size:12px;color:var(--light);margin-top:1rem;line-height:1.6}
 .sc-wrap{display:flex;align-items:center;gap:1.5rem;padding:2rem;background:var(--card);border:0.5px solid var(--border);border-radius:12px;margin-bottom:1.5rem}
@@ -206,20 +208,20 @@ body{font-family:Georgia,serif;background:var(--bg);color:var(--text);min-height
 <p style="font-size:17px;color:var(--muted);margin-bottom:2rem">Completá tus datos para ver el resultado.</p>
 <div class="cap-card">
 <div class="fcols">
-<div class="frow"><label>Nombre</label><input type="text" id="fn" placeholder="Tu nombre"></div>
-<div class="frow"><label>Apellido</label><input type="text" id="fa" placeholder="Tu apellido"></div>
+<div class="frow"><label>Nombre</label><input type="text" id="fn" placeholder="Tu nombre"><div class="errmsg" id="e-fn">Campo obligatorio</div></div>
+<div class="frow"><label>Apellido</label><input type="text" id="fa" placeholder="Tu apellido"><div class="errmsg" id="e-fa">Campo obligatorio</div></div>
 </div>
-<div class="frow"><label>Email *</label><input type="email" id="fe" placeholder="nombre@empresa.com" required></div>
-<div class="frow"><label>Empresa</label><input type="text" id="fco" placeholder="Nombre de tu organización"></div>
-<div class="frow"><label>Rol</label><input type="text" id="fr" placeholder="CEO, Director, Gerente..."></div>
+<div class="frow"><label>Email</label><input type="email" id="fe" placeholder="nombre@empresa.com"><div class="errmsg" id="e-fe">Campo obligatorio</div></div>
+<div class="frow"><label>Empresa</label><input type="text" id="fco" placeholder="Nombre de tu organización"><div class="errmsg" id="e-fco">Campo obligatorio</div></div>
+<div class="frow"><label>Rol</label><input type="text" id="fr" placeholder="CEO, Director, Gerente..."><div class="errmsg" id="e-fr">Campo obligatorio</div></div>
 <div class="frow"><label>Tamaño del equipo</label>
 <select id="ft">
-<option value="">Seleccioná</option>
+<option value="" disabled selected>Seleccioná</option>
 <option value="1-10">1–10 personas</option>
 <option value="11-50">11–50 personas</option>
 <option value="51-200">51–200 personas</option>
 <option value="200+">Más de 200</option>
-</select>
+</select><div class="errmsg" id="e-ft">Campo obligatorio</div>
 </div>
 <div style="margin-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
 <p class="priv" style="margin:0;max-width:340px">Tus datos no se comparten con terceros.</p>
@@ -275,8 +277,20 @@ function showCap(){show('S2')}
 function scores(){var al=(A['1']||0)+(A['2']||0)+(A['3']||0),it=(A['4']||0)+(A['5']||0)+(A['6']||0),am=(A['7']||0)+(A['8']||0)+(A['9']||0);return{al:al,it:it,am:am,tot:al+it+am}}
 function tier(t){return t<=4?'solid':t<=9?'friction':'risk'}
 function submit(){
+var campos=[
+{id:'fn',eid:'e-fn'},{id:'fa',eid:'e-fa'},{id:'fe',eid:'e-fe'},
+{id:'fco',eid:'e-fco'},{id:'fr',eid:'e-fr'},{id:'ft',eid:'e-ft'}
+];
+var ok=true;
+campos.forEach(function(c){
+var el=document.getElementById(c.id);
+var em=document.getElementById(c.eid);
+if(!el.value.trim()){
+el.classList.add('err');em.style.display='block';ok=false;
+}else{el.classList.remove('err');em.style.display='none';}
+});
+if(!ok)return;
 var em=document.getElementById('fe').value.trim();
-if(!em){document.getElementById('fe').focus();return}
 var sc=scores(),tr=tier(sc.tot);
 var nm=document.getElementById('fn').value.trim(),ap=document.getElementById('fa').value.trim();
 var co=document.getElementById('fco').value.trim(),ro=document.getElementById('fr').value.trim(),sz=document.getElementById('ft').value;
